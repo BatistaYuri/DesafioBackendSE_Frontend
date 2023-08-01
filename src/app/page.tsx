@@ -3,23 +3,22 @@ import { AddDisc, Bill, Order, Payment, Person } from "@/models/types";
 import { getPayments } from "@/service/BillService";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import IntlCurrencyInput from "react-intl-currency-input";
-
-const currencyConfig = {
-  locale: "pt-BR",
-  formats: {
-    number: {
-      BRL: {
-        style: "currency",
-        currency: "BRL",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      },
-    },
-  },
-};
+import CurrencyInput from "react-currency-input-field";
 
 export default function Home() {
+  const currencyConfig = {
+    locale: "pt-BR",
+    formats: {
+      number: {
+        BRL: {
+          //style: "currency",
+          currency: "BRL",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        },
+      },
+    },
+  };
   const [idPerson, setIdPerson] = useState<number>(1);
   const [idOrder, setIdOrder] = useState<number>(0);
   const [idAddition, setIdAddition] = useState<number>(0);
@@ -29,11 +28,14 @@ export default function Home() {
   const [email, setEmail] = useState<string>("");
   const [item, setItem] = useState<string>("");
   const [price, setPrice] = useState<number>();
+  const [priceAux, setPriceAux] = useState<string>();
   const [person, setPerson] = useState<number>(0);
   const [additionName, setAdditionName] = useState<string>();
   const [discountName, setDiscountName] = useState<string>();
   const [additionPrice, setAdditionPrice] = useState<number>();
   const [discountPrice, setDiscountPrice] = useState<number>();
+  const [additionPriceAux, setAdditionPriceAux] = useState<string>();
+  const [discountPriceAux, setDiscountPriceAux] = useState<string>();
   const [persons, setPersons] = useState(
     new Map<number, Person>([
       [
@@ -74,6 +76,7 @@ export default function Home() {
       setIdOrder(idOrder + 1);
       setPerson(0);
       setPrice(0);
+      setPriceAux("");
       setItem("");
     }
   };
@@ -182,11 +185,15 @@ export default function Home() {
               Preço*
             </label>
             <div className="intl-currency-input">
-              <IntlCurrencyInput
-                currency="BRL"
-                config={currencyConfig}
-                onChange={(_, value, __) => setPrice(value)}
-                value={price}
+              <CurrencyInput
+                decimalsLimit={2}
+                onValueChange={(value, _) => {
+                  if (value) {
+                    setPriceAux(value);
+                    setPrice(parseFloat(value.replace(",", ".")));
+                  }
+                }}
+                value={priceAux}
               />
             </div>
           </div>
@@ -242,11 +249,15 @@ export default function Home() {
               Preço*
             </label>
             <div className="intl-currency-input">
-              <IntlCurrencyInput
-                currency="BRL"
-                config={currencyConfig}
-                onChange={(_, value, __) => setAdditionPrice(value)}
-                value={additionPrice}
+              <CurrencyInput
+                decimalsLimit={2}
+                onValueChange={(value, _) => {
+                  if (value) {
+                    setAdditionPriceAux(value);
+                    setAdditionPrice(parseFloat(value.replace(",", ".")));
+                  }
+                }}
+                value={additionPriceAux}
               />
             </div>
           </div>
@@ -284,11 +295,15 @@ export default function Home() {
               Preço*
             </label>
             <div className="intl-currency-input">
-              <IntlCurrencyInput
-                currency="BRL"
-                config={currencyConfig}
-                onChange={(_, value, __) => setDiscountPrice(value)}
-                value={discountPrice}
+              <CurrencyInput
+                decimalsLimit={2}
+                onValueChange={(value, _) => {
+                  if (value) {
+                    setDiscountPriceAux(value);
+                    setDiscountPrice(parseFloat(value.replace(",", ".")));
+                  }
+                }}
+                value={discountPriceAux}
               />
             </div>
           </div>
